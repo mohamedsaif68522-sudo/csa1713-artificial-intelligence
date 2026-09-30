@@ -1,0 +1,40 @@
+from collections import deque
+
+def water_jug(cap1, cap2, target):
+    visited = set()
+    queue = deque([(0, 0)])
+
+    while queue:
+        a, b = queue.popleft()
+
+        if (a, b) in visited:
+            continue
+
+        visited.add((a, b))
+        print("Jug 1:", a, "Jug 2:", b)
+
+        if a == target or b == target:
+            print("Target reached!")
+            return
+
+        states = [
+            (cap1, b),                    # Fill Jug 1
+            (a, cap2),                    # Fill Jug 2
+            (0, b),                       # Empty Jug 1
+            (a, 0),                       # Empty Jug 2
+            (a - min(a, cap2 - b),       # Pour Jug 1 -> Jug 2
+             b + min(a, cap2 - b)),
+            (a + min(b, cap1 - a),       # Pour Jug 2 -> Jug 1
+             b - min(b, cap1 - a))
+        ]
+
+        for state in states:
+            if state not in visited:
+                queue.append(state)
+
+
+# Example:
+# Jug 1 = 4 litres, Jug 2 = 3 litres
+# Target = 2 litres
+
+water_jug(4, 3, 2)
