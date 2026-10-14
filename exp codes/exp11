@@ -1,0 +1,56 @@
+```python
+# Map Coloring using CSP (Constraint Satisfaction Problem)
+
+# Define the map as a graph
+graph = {
+    'A': ['B', 'C'],
+    'B': ['A', 'C', 'D'],
+    'C': ['A', 'B', 'D'],
+    'D': ['B', 'C']
+}
+
+# Available colors
+colors = ['Red', 'Green', 'Blue']
+
+# Store the color assigned to each region
+coloring = {}
+
+
+def is_valid(region, color):
+    for neighbor in graph[region]:
+        if coloring.get(neighbor) == color:
+            return False
+    return True
+
+
+def solve():
+    if len(coloring) == len(graph):
+        return True
+
+    # Select the next uncolored region
+    for region in graph:
+        if region not in coloring:
+            break
+
+    # Try each available color
+    for color in colors:
+        if is_valid(region, color):
+            coloring[region] = color
+
+            if solve():
+                return True
+
+            # Backtracking
+            del coloring[region]
+
+    return False
+
+
+# Execute the program
+if solve():
+    print("Map Coloring Solution:")
+    for region, color in coloring.items():
+        print(region, ":", color)
+else:
+    print("No solution exists.")
+```
