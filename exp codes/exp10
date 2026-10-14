@@ -1,0 +1,63 @@
+```python
+import heapq
+
+def astar(graph, heuristic, start, goal):
+    priority_queue = [(heuristic[start], start)]
+    g_cost = {start: 0}
+    parent = {start: None}
+
+    while priority_queue:
+        _, current = heapq.heappop(priority_queue)
+
+        if current == goal:
+            path = []
+            while current is not None:
+                path.append(current)
+                current = parent[current]
+            return path[::-1], g_cost[goal]
+
+        for neighbor, cost in graph[current]:
+            new_cost = g_cost[current] + cost
+
+            if neighbor not in g_cost or new_cost < g_cost[neighbor]:
+                g_cost[neighbor] = new_cost
+                parent[neighbor] = current
+                f_cost = new_cost + heuristic[neighbor]
+                heapq.heappush(priority_queue, (f_cost, neighbor))
+
+    return None, float("inf")
+
+
+# Graph representation
+graph = {
+    'A': [('B', 1), ('C', 3)],
+    'B': [('D', 3), ('E', 1)],
+    'C': [('F', 5)],
+    'D': [('G', 2)],
+    'E': [('G', 4)],
+    'F': [('G', 2)],
+    'G': []
+}
+
+# Heuristic values
+heuristic = {
+    'A': 7,
+    'B': 6,
+    'C': 5,
+    'D': 2,
+    'E': 4,
+    'F': 2,
+    'G': 0
+}
+
+start = 'A'
+goal = 'G'
+
+path, cost = astar(graph, heuristic, start, goal)
+
+if path:
+    print("Shortest Path:", " -> ".join(path))
+    print("Total Cost:", cost)
+else:
+    print("No path found")
+```
