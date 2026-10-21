@@ -1,0 +1,32 @@
+import math
+
+def minimax(depth, node_index, is_maximizing, values, tree_depth):
+    # Base condition: leaf node reached
+    if depth == tree_depth:
+        return values[node_index]
+
+    if is_maximizing:
+        best_val = -math.inf
+        # Evaluate left and right child nodes
+        for i in range(2):
+            val = minimax(depth + 1, node_index * 2 + i, False, values, tree_depth)
+            best_val = max(best_val, val)
+        return best_val
+    else:
+        best_val = math.inf
+        # Evaluate left and right child nodes
+        for i in range(2):
+            val = minimax(depth + 1, node_index * 2 + i, True, values, tree_depth)
+            best_val = min(best_val, val)
+        return best_val
+
+
+if _name_ == "_main_":
+    # Terminal/Leaf node scores of the game tree
+    # Tree representation: Binary tree with depth 3 (2^3 = 8 leaves)
+    scores = [3, 5, 2, 9, 12, 5, 23, 23]
+    total_depth = int(math.log2(len(scores)))
+
+    print("Leaf Node Values:", scores)
+    optimal_value = minimax(0, 0, True, scores, total_depth)
+    print(f"The optimal value for the Maximizer is: {optimal_value}")
