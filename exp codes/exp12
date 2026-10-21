@@ -1,0 +1,95 @@
+import math
+
+def print_board(b):
+    print(f"\n {b[0]} | {b[1]} | {b[2]} ")
+    print("---+---+---")
+    print(f" {b[3]} | {b[4]} | {b[5]} ")
+    print("---+---+---")
+    print(f" {b[6]} | {b[7]} | {b[8]} \n")
+
+def check_win(b, p):
+    wins = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]]
+    return any(all(b[pos] == p for pos in line) for line in wins)
+
+def is_full(b):
+    return ' ' not in b
+
+def minimax(b, is_max):
+    if check_win(b, 'O'): return 1
+    if check_win(b, 'X'): return -1
+    if is_full(b): return 0
+
+    if is_max:
+        best_score = -math.inf
+        for i in range(9):
+            if b[i] == ' ':
+                b[i] = 'O'
+                score = minimax(b, False)
+                b[i] = ' '
+                best_score = max(score, best_score)
+        return best_score
+    else:
+        best_score = math.inf
+        for i in range(9):
+            if b[i] == ' ':
+                b[i] = 'X'
+                score = minimax(b, True)
+                b[i] = ' '
+                best_score = min(score, best_score)
+        return best_score
+
+def get_best_move(b):
+    best_score = -math.inf
+    move = -1
+    for i in range(9):
+        if b[i] == ' ':
+            b[i] = 'O'
+            score = minimax(b, False)
+            b[i] = ' '
+            if score > best_score:
+                best_score = score
+                move = i
+    return move
+
+def play_game():
+    board = [' '] * 9
+    print("Tic Tac Toe with Minimax AI (You: X | AI: O)")
+
+    while True:
+        print_board(board)
+        # Human Move
+        try:
+            spot = int(input("Enter spot (1-9): ")) - 1
+            if spot < 0 or spot > 8 or board[spot] != ' ':
+                print("Invalid spot! Try again.")
+                continue
+        except ValueError:
+            print("Enter a number 1-9.")
+            continue
+
+        board[spot] = 'X'
+        if check_win(board, 'X'):
+            print_board(board)
+            print("You won!")
+            break
+        if is_full(board):
+            print_board(board)
+            print("Game Draw!")
+            break
+
+        # AI Move
+        ai_spot = get_best_move(board)
+        board[ai_spot] = 'O'
+        print(f"AI chose spot {ai_spot + 1}")
+
+        if check_win(board, 'O'):
+            print_board(board)
+            print("AI wins!")
+            break
+        if is_full(board):
+            print_board(board)
+            print("Game Draw!")
+            break
+
+if _name_ == "_main_":
+    play_game()
